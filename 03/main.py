@@ -5,56 +5,38 @@ FILE_NAME="input03.txt"
 
 def load_file(file_name):
     file=open(file_name, "r")
-    lines=file.readlines()
-    return lines
+    return file.read()
 
-def punct_symbols():
-    all_punctation=string.punctuation
-    result=all_punctation.replace('.', '')
-    return result
-
-def extract_adjacent_numbers(lines):
-    punctuation = punct_symbols()
-    pattern = f"[{re.escape(punctuation)}]\d+|\d+[{re.escape(punctuation)}]"
-    
-    
-
-    lines = [line.replace('\n', '') for line in lines]
-    
-    rows = len(lines)
-    cols = len(lines[0])
-    print(lines)
-    print(rows)
-    print(cols)
-    table = [[lines[i][j] for j in range(cols)] for i in range(rows)]
-
-    adjacent_numbers = []
-
-    for i in range(rows):
-        for j in range(cols):
-            if lines[i][j].isdigit():
-                adjacent_numbers.append(lines[i][j])
-
-            # Check adjacent cells
-            if lines[i][j] in punctuation:
-                adjacent_cells = [(i + x, j + y) for x in range(-1, 2) for y in range(-1, 2) if
-                                  0 <= i + x < rows and 0 <= j + y < cols]
-                for cell in adjacent_cells:
-                    x, y = cell
-                    if lines[x][y].isdigit():
-                        adjacent_numbers.append(lines[x][y])
-
-    # Deduplicate and return the adjacent numbers
-    return list(set(adjacent_numbers))
+symbol_position = set()
+text = load_file(FILE_NAME)
+field=text.split('\n')
 
 
+for x, row in enumerate(field):
+    for y, column in enumerate(row):
+        if column.isdigit() or column == '.':
+            continue
+        symbol_position.add((x,y))
 
-if __name__=="__main__":
-    lines=load_file(FILE_NAME)
-    print(lines)
-    our_punct= punct_symbols()
-    pattern = f"[{re.escape(our_punct)}]\d+|\d+[{re.escape(our_punct)}]"
-    result = extract_adjacent_numbers(lines)
-    print(result)
-    #print(our_punct)
-    
+start_of_number = set()
+
+for x,y in symbol_position:
+    for tx in range(x-1, x+2):
+        for ty in range (y-1, y+2):
+            if tx < 0 or tx > len(field) or not field[tx][ty].isdigit():
+                continue
+            if ty <0 or ty> len(field[tx]) or not field[tx][ty].isdigit():
+                continue
+            while ty >0 and field[tx][ty - 1].isdigit():
+                ty -= 1
+            start_of_number.add((tx,ty))
+
+final_numbers=[]
+for x,y in start_of_number:
+    temp = ''
+    while y < len(field[x]) and field[x][y].isdigit():
+        temp += field[x][y]
+        y+=1
+    final_numbers.append(int(temp))
+
+print (sum(final_numbers))
