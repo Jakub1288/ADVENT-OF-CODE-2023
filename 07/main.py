@@ -1,44 +1,43 @@
-from collections import Counter
+from dataclasses import dataclass
 FILE_NAME="input07.txt"
 
 def load_file(file_name):
     file=open(file_name, "r")
     return file.read()
 
-hand_strange = {'2':1,
-                '3':2,
-                '4':3,
-                '5':4,
-                '6':5,
-                '7':6,
-                '8':7,
-                '9':8,
-                'T':9,
-                'J':10,
-                'Q':11,
-                'K':12,
-                'A':13}
+hand_strange = {'2': '2',
+    '3': '3',
+    '4': '4',
+    '5': '5',
+    '6': '6',
+    '7': '7',
+    '8': '8',
+    '9': '9',
+    'T': 'A',
+    'J': 'B',
+    'Q': 'C',
+    'K': 'D',
+    'A': 'E'}
 
-hand_value = {}
-card_counter = 1
-hand_number=1
-
+@dataclass
+class Hand:
+    cards: str
+    value: int
+    type: int=-1
 
 if __name__=="__main__":
     lines=load_file(FILE_NAME)
     lines = lines.split('\n')
+    hand_value = {}
+    hand_number=1
 
     for hand in lines:
         used_card=[]
-
         for card in (hand.split(' ')[0]):
             used_card.append(card)
-            print (used_card)
-
+           
         for letter in used_card:
             counts = [used_card.count(letter) for letter in used_card]
-
-        print (counts)
 
         if 5 in counts:
             hand_value[hand_number] = 7
@@ -56,8 +55,24 @@ if __name__=="__main__":
         else:
             hand_value[hand_number] = 1
 
-           
-        print("dalsi ruka")
         hand_number+=1
-    print (hand_value)     
+       
+    hands=[]
+    iteration_number = 1
+    for hand in lines:
+        tmp = hand.split(' ')
+        hand=Hand(
+        cards= ''.join(hand_strange.get(char, char) for char in tmp[0]),
+        value=int(tmp[1])) 
+        hand.type = hand_value[iteration_number]
+        iteration_number+=1
+        hands.append(hand)
     
+    hands.sort(key=lambda hand: (hand.type, hand.cards))
+    result = 0
+    for rank, hand in enumerate(hands, 1):
+        result += rank * hand.value
+
+    print(result)
+        
+          
