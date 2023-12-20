@@ -63,8 +63,8 @@ if __name__=="__main__":
         tmp = hand.split(' ')
         hand=Hand(
         cards= ''.join(hand_strange.get(char, char) for char in tmp[0]),
-        value=int(tmp[1])) 
-        hand.type = hand_value[iteration_number]
+        value=int(tmp[1]),
+        type = hand_value[iteration_number] ) 
         iteration_number+=1
         hands.append(hand)
     
