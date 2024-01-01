@@ -2,18 +2,18 @@ FILE_NAME="input08.txt"
 
 def load_file(file_name):
     file=open(file_name, "r")
-    lines=file.read()
+    lines=file.read().splitlines()
     return lines
 
 if __name__=="__main__":
     lines=load_file(FILE_NAME)
 
-    instructions = (lines.split('\n')[0])
+    instructions = (lines[0])
     instruction_list = [letter for letter in instructions]
    
 
     map_dict = {}
-    for line in lines.split('\n')[2:]:
+    for line in lines[2:]:
         split_line = line.split('=')
         key = split_line[0].strip()
         value = (split_line[1].strip())
